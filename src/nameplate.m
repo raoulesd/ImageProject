@@ -22,7 +22,7 @@ function varargout = nameplate(varargin)
 
 % Edit the above text to modify the response to help nameplate
 
-% Last Modified by GUIDE v2.5 11-Jan-2018 15:24:37
+% Last Modified by GUIDE v2.5 15-Jan-2018 15:00:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,25 +54,14 @@ function nameplate_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for nameplate
 handles.output = hObject;
-handles.video = videoinput('C:\Users\raoulesd\Documents\MATLAB\Image Processing\Project\TrainingVideo.avi');
 
-get(handles.video);
-src = getselectedsource(handles.video);
-get(src);
+handles.video = VideoReader('C:\Users\raoulesd\Documents\MATLAB\Image Processing\Project\TrainingVideo.avi');
 
-
-axes(handles.axes1);
-image(userdata(handles.video, 1));
-data = getdata(handles.video, 1);
-h = get(handles.axes1, 'Children');
-set(h, 'CData', data);
-% Update handles structure
-guidata(hObject, handles);
-
-% UIWAIT makes nameplate wait for user response (see UIRESUME)
+guidata(hObject, handles);  
 % uiwait(handles.figure1);
 
 
+% UIWAIT makes nameplate wait
 % --- Outputs from this function are returned to the command line.
 function varargout = nameplate_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -89,3 +78,22 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in startvideo.
+function startvideo_Callback(hObject, eventdata, handles)
+% hObject    handle to startvideo (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+axes(handles.axes1);
+nFrames = 50;
+for i = 1:nFrames
+    
+    img = read(handles.video,i);
+    image(img);
+    drawnow; 
+    set(handles.axes1, 'Visible','off');
+    pause(0.05);
+end
+guidata(hObject, handles); 
