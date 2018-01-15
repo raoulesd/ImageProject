@@ -22,7 +22,7 @@ function varargout = nameplate(varargin)
 
 % Edit the above text to modify the response to help nameplate
 
-% Last Modified by GUIDE v2.5 15-Jan-2018 15:00:54
+% Last Modified by GUIDE v2.5 15-Jan-2018 15:50:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -88,6 +88,13 @@ function startvideo_Callback(hObject, eventdata, handles)
 
 axes(handles.axes1);
 nFrames = 50;
+
+%I am taking the first frame just for testing purposes, as bounding boxes
+%need to be implemented first
+img = read(handles.video,1);
+handles.currentText.String = processImage(img);
+
+
 for i = 1:nFrames
     
     img = read(handles.video,i);
@@ -97,3 +104,10 @@ for i = 1:nFrames
     pause(0.05);
 end
 guidata(hObject, handles); 
+
+function processImage =  processImage(image)
+
+%Here we should add functionality to detect bounding box per image
+box = [225,313,204,49]; %This is the bounding box of the first frame
+ocrRes = ocr(image,box, 'TextLayout' ,'Word')
+processImage = ocrRes.Text;
