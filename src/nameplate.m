@@ -55,7 +55,7 @@ function nameplate_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for nameplate
 handles.output = hObject;
 
-handles.video = VideoReader('C:\Users\raoulesd\Documents\MATLAB\Image Processing\Project\TrainingVideo.avi');
+handles.video = VideoReader('TrainingVideo.avi');
 
 guidata(hObject, handles);  
 % uiwait(handles.figure1);
