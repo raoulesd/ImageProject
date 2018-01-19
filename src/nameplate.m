@@ -58,7 +58,7 @@ handles.output = hObject;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 12;
+handles.nFrames = 50;
 
 handles.video = VideoReader('TrainingVideo.avi');
 
@@ -99,7 +99,7 @@ img = read(handles.video,1);
 handles.mainTable.Data = {};
 t=handles.mainTable;
 % Set width and height
-t.ColumnWidth{1,2} = 138;
+t.ColumnWidth{1,2} = 120;
 
 
 global loopBoolean;
@@ -116,7 +116,7 @@ for i = 1:handles.nFrames
         table = handles.mainTable.Data;
         table{i,1} = i;
         if(size(result,1) == 0)
-            table{i,2} = 0;
+            table{i,2} = '0';
         else
             table{i,2} = result(:);
         end 
