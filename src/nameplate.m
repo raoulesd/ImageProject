@@ -87,19 +87,33 @@ function startvideo_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 axes(handles.axes1);
-nFrames = 50;
+nFrames = 10;
 
 %I am taking the first frame just for testing purposes, as bounding boxes
 %need to be implemented first
 img = read(handles.video,1);
-handles.currentText.String = processImage(img);
-
+handles.mainTable.Data = {}
+t=handles.mainTable
+% Set width and height
+t.ColumnWidth{1,2} = 200;
 
 for i = 1:nFrames
-    
+    result = processImage(img)
+    handles.currentText.String = result;
     img = read(handles.video,i);
     image(img);
     drawnow; 
+    table = handles.mainTable.Data;
+    table{i,1} = i;
+ 
+    if(size(result,1) == 0)
+        table{i,2} = 0;
+    else
+        table{i,2} = result;
+    end 
+    handles.mainTable.Data = table;
+    
+    
     set(handles.axes1, 'Visible','off');
     pause(0.05);
 end
@@ -108,6 +122,7 @@ guidata(hObject, handles);
 function processImage =  processImage(image)
 
 %Here we should add functionality to detect bounding box per image
+
 box = [225,313,204,49]; %This is the bounding box of the first frame
 ocrRes = ocr(image,box, 'TextLayout' ,'Word')
 processImage = ocrRes.Text;

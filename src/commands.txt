@@ -1,0 +1,3 @@
+figure; imshow(I); roi = round(getPosition(imrect))
+
+imshow(imadjust(grayImage,[0.4 0.7],[]))
