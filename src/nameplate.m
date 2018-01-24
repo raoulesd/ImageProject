@@ -22,7 +22,7 @@ function varargout = nameplate(varargin)
 
 % Edit the above text to modify the response to help nameplate
 
-% Last Modified by GUIDE v2.5 15-Jan-2018 15:00:54
+% Last Modified by GUIDE v2.5 19-Jan-2018 20:58:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,6 +54,11 @@ function nameplate_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for nameplate
 handles.output = hObject;
+
+global loopBoolean;
+loopBoolean = true;
+
+handles.nFrames = 50;
 
 handles.video = VideoReader('TrainingVideo.avi');
 
@@ -87,13 +92,57 @@ function startvideo_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 axes(handles.axes1);
-nFrames = 50;
-for i = 1:nFrames
-    
-    img = read(handles.video,i);
-    image(img);
-    drawnow; 
-    set(handles.axes1, 'Visible','off');
-    pause(0.05);
+
+%I am taking the first frame just for testing purposes, as bounding boxes
+%need to be implemented first
+img = read(handles.video,1);
+handles.mainTable.Data = {};
+t=handles.mainTable;
+% Set width and height
+t.ColumnWidth{1,2} = 120;
+
+
+global loopBoolean;
+loopBoolean = true;
+
+
+for i = 1:handles.nFrames
+    if(loopBoolean)
+        result = processImage(img);
+        handles.currentText.String = result;
+        img = read(handles.video,i);
+        image(img);
+        drawnow; 
+        table = handles.mainTable.Data;
+        table{i,1} = i;
+        if(size(result,1) == 0)
+            table{i,2} = '0';
+        else
+            table{i,2} = result(:);
+        end 
+        handles.mainTable.Data = table;
+        set(handles.axes1, 'Visible','off');
+        pause(0.05);
+    end
 end
 guidata(hObject, handles); 
+
+function processImage =  processImage(image)
+
+%Here we should add functionality to detect bounding box per image
+
+box = [225,313,204,49]; %This is the bounding box of the first frame
+ocrRes = ocr(image,box, 'TextLayout' ,'Word');
+processImage = ocrRes.Text;
+
+
+% --- Executes on button press in stopvideo.
+function stopvideo_Callback(hObject, eventdata, handles)
+% hObject    handle to stopvideo (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global loopBoolean; 
+loopBoolean = false;
+
+guidata(hObject, handles);
+
