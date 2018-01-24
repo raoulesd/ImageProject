@@ -1,9 +1,4 @@
 function finalPlate = getPlate(frame)
-%clear all;
-%run('C:\Program Files\DIPimage 2.9\dipstart.m');
-%video = VideoReader('TrainingVideo.avi');
-%frame = imread('firstframe.png');
-%frame = read(video, 40);
 
 % Removing objects that are not within a certain color range which represents a
 % licenseplate
@@ -23,16 +18,18 @@ opened = bopening(closed, 8, 2, 0);
 plate = dip_array(opened);
 
 % Retrieving measurements from the image with just the plate
-measurements = regionprops(plate, 'Orientation', 'BoundingBox');
+measurements = regionprops(plate, 'Orientation');
 
-% Crop the original image by the bounding box of the licenseplate
-croppedImage = imcrop(frame, measurements.BoundingBox);
-
-% Use the orientation measurement to rotate the cropped image
+% Use the orientation measurement to rotate the binary image to get a
+% boundingbox
 angle = cat(1, measurements.Orientation);
-finalPlate = imrotate(croppedImage, 1 - angle);
-%image(rotated);
-%title('ROTATED');
+rotatedBinary = imrotate(plate, 1 - angle);
+measurements2 = regionprops(rotatedBinary, 'BoundingBox');
+
+% Rotate the original image the same amount and crop according to the
+% boundingbox
+rotatedOriginal = imrotate(frame, 1 - angle);
+finalPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
 
 end
 
