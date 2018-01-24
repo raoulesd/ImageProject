@@ -108,7 +108,15 @@ loopBoolean = true;
 
 for i = 1:handles.nFrames
     if(loopBoolean)
-        result = processImage(img);
+        
+        axes(handles.axes1);
+        imageplate = getPlate(img);
+        
+        %This needs to be changed to our own OCR
+        ocrRes = ocr(imageplate);
+       
+        result = ocrRes.Text;
+        
         handles.currentText.String = result;
         img = read(handles.video,i);
         image(img);
@@ -122,18 +130,18 @@ for i = 1:handles.nFrames
         end 
         handles.mainTable.Data = table;
         set(handles.axes1, 'Visible','off');
+       
+        axes(handles.axes2);
+        set(handles.axes2, 'Visible','off');
+        image(imageplate);
+        drawnow;
+        
+        
         pause(0.05);
     end
 end
 guidata(hObject, handles); 
 
-function processImage =  processImage(image)
-
-%Here we should add functionality to detect bounding box per image
-
-box = [225,313,204,49]; %This is the bounding box of the first frame
-ocrRes = ocr(image,box, 'TextLayout' ,'Word');
-processImage = ocrRes.Text;
 
 
 % --- Executes on button press in stopvideo.

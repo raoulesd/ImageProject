@@ -29,7 +29,7 @@ measurements = regionprops(plate, 'Orientation', 'BoundingBox');
 croppedImage = imcrop(frame, measurements.BoundingBox);
 
 % Use the orientation measurement to rotate the cropped image
-angle = cat(1, s.Orientation);
+angle = cat(1, measurements.Orientation);
 finalPlate = imrotate(croppedImage, 1 - angle);
 %image(rotated);
 %title('ROTATED');
