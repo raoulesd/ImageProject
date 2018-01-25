@@ -58,7 +58,7 @@ handles.output = hObject;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 50;
+handles.nFrames = 44;
 
 handles.video = VideoReader('TrainingVideo.avi');
 
