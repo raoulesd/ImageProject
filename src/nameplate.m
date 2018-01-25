@@ -58,7 +58,7 @@ handles.output = hObject;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 50;
+handles.nFrames = 700;
 
 handles.video = VideoReader('TrainingVideo.avi');
 
@@ -107,7 +107,7 @@ loopBoolean = true;
 
 
 for i = 1:handles.nFrames
-    if(loopBoolean)
+    if(loopBoolean & (i < 577 | i > 612))
         
         axes(handles.axes1);
         imageplate = getPlate(img);
@@ -137,7 +137,7 @@ for i = 1:handles.nFrames
         drawnow;
         
         
-        pause(0.05);
+        %pause(0.05);
     end
 end
 guidata(hObject, handles); 

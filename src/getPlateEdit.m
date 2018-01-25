@@ -1,4 +1,8 @@
-function finalPlate = getPlate(frame)
+clear all;
+run('C:\Program Files\DIPimage 2.9\dipstart.m');
+video = VideoReader('TrainingVideo.avi');
+%frame = imread('firstframe.png');
+frame = read(video, 612);
 
 % Removing objects that are not within a certain color range which represents a
 % licenseplate
@@ -7,6 +11,8 @@ green = frame(:,:,2);
 blue = frame(:,:,3);
 
 y = (red > 60 & red < 240 & green > 80 & green < 160 & blue > 30 & blue < 100 & blue < 14/18 *green & green > 2/3 * red & green < 9/10 * red);
+figure;
+image(y);
 
 % Removing small holes
 closed = bclosing(y, 11, 2, 0);
@@ -30,7 +36,5 @@ measurements2 = regionprops(rotatedBinary, 'BoundingBox');
 % boundingbox
 rotatedOriginal = imrotate(frame, 1 - angle);
 finalPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
-
-end
-
-
+figure;
+image(finalPlate);
