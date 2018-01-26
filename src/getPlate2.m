@@ -1,9 +1,18 @@
 function finalPlate = getPlate2(frame) %input is a license plate as binary image 
-run('alphabet.m')
+if(~exist('alpabet','var'))
+    run('alphabet.m')
+end
+
+aIndex = size(alpabet,2);
+
 labeled = bwlabel(frame);
 s = regionprops(labeled, 'extrema');
 
+image(frame)
+% display(numel(s));
+count = 1;
 for label = 1:numel(s)
+    
 
     index = label;
 
@@ -11,12 +20,18 @@ for label = 1:numel(s)
     Sdata=regionprops(labeled == index,'BoundingBox');
     Img=imcrop(labeled,Sdata(1).BoundingBox);
 
-    boolean = size(Img,1) < 15 || size(Img,1) > 50;
+%     figure;
+%     image(Img);
+%     title(label);
+    
+    boolean = size(Img,2) < 15 || size(Img,2) > 70;
     Img = im2bw(imresize(Img,[120 100]));
+    
+    
 
-    totals = zeros(1,30);
-
-    for i=1:30
+    totals = zeros(1,aIndex);
+    
+    for i=1:aIndex
         if(~boolean)
             letter = ~cell2mat(alpabet(1,i));
             [rows, columns] = find(letter);
@@ -27,22 +42,24 @@ for label = 1:numel(s)
             croppedImage = letter(row1:row2, col1:col2);
 
             croppedImage = imresize(croppedImage,[120 100]);
-
-
+            
             totals(i) = mean(max(normxcorr2(Img, croppedImage)));
         end
     end
     if(~boolean)
         [L,I] = max(totals);
-        result(1,label) = alphabetIndex(I);
+        result(1,count) = alphabetIndex(I);
+        count = count + 1;
     else
-        if(label > 2)
-            result(1,label) = '-';
-        end
+%         result(1,label) = '-'
     end
+    
 end
 
-finalPlate = result;
+if(exist('result','var'))
+    finalPlate = result;
+else
+    finalPlate = '';
 
 end
 

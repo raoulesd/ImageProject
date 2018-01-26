@@ -58,7 +58,7 @@ handles.output = hObject;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 80;
+handles.nFrames = 800;
 
 
 handles.video = VideoReader('TrainingVideo.avi');
@@ -96,7 +96,7 @@ axes(handles.axes1);
 
 %I am taking the first frame just for testing purposes, as bounding boxes
 %need to be implemented first
-img = read(handles.video,1);
+
 handles.mainTable.Data = {};
 t=handles.mainTable;
 % Set width and height
@@ -108,8 +108,10 @@ loopBoolean = true;
 
 
 colormap(gray(2));
-for i = 1:handles.nFrames
+count = 1;
+for i = 1:8:handles.nFrames
     if(loopBoolean & (i < 577 | i > 612))
+        img = read(handles.video,i);
         
         axes(handles.axes1);
         imageplate = getPlate(img);
@@ -132,22 +134,22 @@ for i = 1:handles.nFrames
         drawnow; 
         
        
-%         result = getPlate2(imageplate);
-        result = '';
+        result = getPlate2(imageplate);
+%         result = '';
         
         handles.currentText.String = result;
         
         table = handles.mainTable.Data;
-        table{i,1} = i;
-        table{i,2} = strcat(result);
+        table{count,1} = i;
+        table{count,2} = strcat(result);
         handles.mainTable.Data = table;
         
         
         
         drawnow;
         
-        
-        %pause(0.05);
+        count = count + 1;
+        pause(0.05);
     end
 end
 guidata(hObject, handles); 
