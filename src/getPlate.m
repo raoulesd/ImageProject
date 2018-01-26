@@ -31,6 +31,7 @@ measurements2 = regionprops(rotatedBinary, 'BoundingBox');
 rotatedOriginal = imrotate(frame, 1 - angle);
 finalPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
 
+
 end
 
 
