@@ -1,24 +1,22 @@
 clear all;
+run('alphabet.m')
 
 video = VideoReader('TrainingVideo.avi');
 %url = 'https://blogs.mathworks.com/images/steve/186/scanned_page.png';
 %bw = imread(url);
-bw = getPlate(read(video,1));
+bw2 = getPlate(read(video,1));
 
-imshow(bw, 'InitialMagnification', 'fit')
+%imshow(bw2, 'InitialMagnification', 'fit')
+%bw2 = rgb2gray(bw2)
+%bw = edge(bw2,'canny')
+bw2 = ~im2bw(bw2, 0.40);
 
+bw = bwareaopen(bw2, 50);
 
+image(bw);
+result = getPlate2(bw)
 
-L1 = bwlabel(bw);
+ 
 
-I = im2uint8(bw);
-I(~bw) = 200;
-I(bw) = 240;
-s = regionprops(L1, 'extrema');
-imshow(I, 'InitialMagnification', 'fit')
-hold on
-for k = 1:numel(s)
-   e = s(k).Extrema;
-   text(e(1,1), e(1,2), sprintf('%d', k));
-end
-hold off
+ 
+

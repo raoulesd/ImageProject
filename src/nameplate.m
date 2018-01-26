@@ -58,7 +58,7 @@ handles.output = hObject;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 44;
+handles.nFrames = 80;
 
 handles.video = VideoReader('TrainingVideo.avi');
 
@@ -108,32 +108,34 @@ loopBoolean = true;
 
 for i = 1:handles.nFrames
     if(loopBoolean)
+        img = read(handles.video,i);
         
         axes(handles.axes1);
+        
         imageplate = getPlate(img);
-        
-        %This needs to be changed to our own OCR
-        ocrRes = ocr(imageplate);
-       
-        result = ocrRes.Text;
-        
-        handles.currentText.String = result;
-        img = read(handles.video,i);
         image(img);
         drawnow; 
-        table = handles.mainTable.Data;
-        table{i,1} = i;
-        if(size(result,1) == 0)
-            table{i,2} = '0';
-        else
-            table{i,2} = result(:);
-        end 
-        handles.mainTable.Data = table;
+        
         set(handles.axes1, 'Visible','off');
        
         axes(handles.axes2);
         set(handles.axes2, 'Visible','off');
         image(imageplate);
+        drawnow; 
+        
+       
+%         result = getPlate2(imageplate);
+        result = '';
+        
+        handles.currentText.String = result;
+        
+        table = handles.mainTable.Data;
+        table{i,1} = i;
+        table{i,2} = strcat(result);
+        handles.mainTable.Data = table;
+        
+        
+        
         drawnow;
         
         
