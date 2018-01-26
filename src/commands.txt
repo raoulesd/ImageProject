@@ -8,7 +8,9 @@ video = VideoReader('TrainingVideo.avi');
 
 test sample #37 is wrong
 
-
+for i=1:numel(s)
+    selection = labeled == i;
+end
 
 for i=1:30
     letter = cell2mat(alpabet(1,i));

@@ -39,6 +39,7 @@ Icorrected = imtophat(I, strel('disk', 50));
 BW1 = imbinarize(Icorrected);
 complement = imcomplement(BW1);
 groupSize = round((11/18) * size(complement, 2));
+
 binary = bwareaopen(complement, groupSize, 8);
 
 L2 = bwlabel(binary);

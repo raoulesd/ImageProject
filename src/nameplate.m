@@ -54,11 +54,13 @@ function nameplate_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for nameplate
 handles.output = hObject;
-
+handles.alpabet = alphabet();
+handles.previous = 0;
 global loopBoolean;
 loopBoolean = true;
 
 handles.nFrames = 800;
+
 
 
 handles.video = VideoReader('TrainingVideo.avi');
@@ -105,7 +107,7 @@ t.ColumnWidth{1,2} = 120;
 
 global loopBoolean;
 loopBoolean = true;
-
+previousFrame = [[]];
 
 colormap(gray(2));
 count = 1;
@@ -116,13 +118,6 @@ for i = 1:8:handles.nFrames
         axes(handles.axes1);
         imageplate = getPlate(img);
         
-        
-        %This needs to be changed to our own OCR
-        ocrRes = ocr(imageplate);
-       
-        result = ocrRes.Text;
-        
-        imageplate = getPlate(img);
         image(img);
         drawnow; 
         
@@ -134,22 +129,36 @@ for i = 1:8:handles.nFrames
         drawnow; 
         
        
-        result = getPlate2(imageplate);
+        result = getPlate2(imageplate,handles.alpabet);
 %         result = '';
         
         handles.currentText.String = result;
         
-        table = handles.mainTable.Data;
-        table{count,1} = i;
-        table{count,2} = strcat(result);
-        handles.mainTable.Data = table;
+        previousFrame = uint8(previousFrame);
+        sim = 0;
+        if(size(previousFrame,1) == size(img,1))
+            sim = mean(mean(mean(imabsdiff(previousFrame, img))));
+        end
+        if(sim > 30)
+            count = count + 1;
+        end
+
+        if( ~strcmp(handles.previous, result))
+            table = handles.mainTable.Data;
+            table{count,1} = strcat(result);
+            table{count,2} = i;
+            table{count,3} = handles.video.CurrentTime; 
+            handles.mainTable.Data = table;
+        end
+
+  
         
-        
-        
+        previousFrame = img;
         drawnow;
         
-        count = count + 1;
-        pause(0.05);
+        
+        handles.previous = result;
+         pause(0.25);
     end
 end
 guidata(hObject, handles); 

@@ -1,3 +1,4 @@
+function alpabet = alphabet()
 streep = im2bw(imread('letters_numbers/-.bmp'));
 zero = im2bw(imread('letters_numbers/0.bmp'));
 one = im2bw(imread('letters_numbers/1.bmp'));
@@ -32,3 +33,4 @@ Z = im2bw(imread('letters_numbers/Z.bmp'));
 
 alpabet = {[B] [C] [D] [F] [G] [H] [J] [K] [L] [M] [N] [P] [R] [S] [T] [V] [W] [X] [Y] [Z] [one] [two] [three] [four] [five] [six] [seven] [eight] [nine] [zero]};
 
+end
