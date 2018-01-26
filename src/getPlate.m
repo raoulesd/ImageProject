@@ -38,12 +38,20 @@ BW = imbinarize(I);
 I = rgb2gray(croppedPlate);
 BW = imbinarize(I);
 
-
 Icorrected = imtophat(I, strel('disk', 50));
 
 BW1 = imbinarize(Icorrected);
 complement = imcomplement(BW1);
 groupSize = round((11/18) * size(complement, 2));
+
+labeled = bwlabel(complement);
+
+s = regionprops(labeled, 'extrema');
+complement = bwareaopen(complement, groupSize, 8);
+
+if(numel(s) < 6)
+    complement = bwareaopen(complement, groupSize, 8);
+end
 finalPlate = bwareaopen(complement, groupSize, 8);
 
 end
