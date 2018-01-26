@@ -1,4 +1,8 @@
-function finalPlate = getPlate(frame)
+clear all;
+run('C:\Program Files\DIPimage 2.9\dipstart.m');
+video = VideoReader('TrainingVideo.avi');
+%frame = imread('firstframe.png');
+frame = read(video, 50);
 
 % Removing objects that are not within a certain color range which represents a
 % licenseplate
@@ -30,12 +34,11 @@ measurements2 = regionprops(rotatedBinary, 'BoundingBox');
 % boundingbox
 rotatedOriginal = imrotate(frame, 1 - angle);
 croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
+figure;
+image(croppedPlate);
+sharpened = imsharpen(croppedPlate);
 
-I = rgb2gray(croppedPlate);
-BW = imbinarize(I);
-
-
-I = rgb2gray(croppedPlate);
+I = rgb2gray(sharpened);
 BW = imbinarize(I);
 
 
@@ -43,9 +46,34 @@ Icorrected = imtophat(I, strel('disk', 50));
 
 BW1 = imbinarize(Icorrected);
 complement = imcomplement(BW1);
-groupSize = round((11/18) * size(complement, 2));
-finalPlate = bwareaopen(complement, groupSize, 8);
+size(complement, 2)
+finalPlate = bwareaopen(complement, 100, 8);
 
-end
+figure;
+image(complement);
+colormap(gray(2));
+title('NOT OPENED');
+
+figure;
+image(finalPlate);
+colormap(gray(2));
+title('OPENED');
+
+
+
+% red2 = croppedPlate(:,:,1);
+% green2 = croppedPlate(:,:,2);
+% blue2 = croppedPlate(:,:,3);
+% 
+% thresh = (red2 + green2 + blue2) / 3;
+% 
+% HSV = rgb2hsv(croppedPlate);
+% value = HSV(:,:,3);
+% meanValue = mean(value);
+% locations = (value < meanValue & thresh < 92);
+
+
+
+
 
 

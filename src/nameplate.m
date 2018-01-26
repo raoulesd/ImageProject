@@ -60,6 +60,7 @@ loopBoolean = true;
 
 handles.nFrames = 80;
 
+
 handles.video = VideoReader('TrainingVideo.avi');
 
 guidata(hObject, handles);  
@@ -106,11 +107,18 @@ global loopBoolean;
 loopBoolean = true;
 
 
+colormap(gray(2));
 for i = 1:handles.nFrames
-    if(loopBoolean)
-        img = read(handles.video,i);
+    if(loopBoolean & (i < 577 | i > 612))
         
         axes(handles.axes1);
+        imageplate = getPlate(img);
+        
+        
+        %This needs to be changed to our own OCR
+        ocrRes = ocr(imageplate);
+       
+        result = ocrRes.Text;
         
         imageplate = getPlate(img);
         image(img);
@@ -139,7 +147,7 @@ for i = 1:handles.nFrames
         drawnow;
         
         
-        pause(0.05);
+        %pause(0.05);
     end
 end
 guidata(hObject, handles); 

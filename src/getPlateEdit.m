@@ -1,4 +1,8 @@
-function finalPlate = getPlate(frame)
+clear all;
+run('C:\Program Files\DIPimage 2.9\dipstart.m');
+video = VideoReader('TrainingVideo.avi');
+%frame = imread('firstframe.png');
+frame = read(video, 200);
 
 % Removing objects that are not within a certain color range which represents a
 % licenseplate
@@ -30,22 +34,54 @@ measurements2 = regionprops(rotatedBinary, 'BoundingBox');
 % boundingbox
 rotatedOriginal = imrotate(frame, 1 - angle);
 croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
+figure;
+image(croppedPlate);
 
-I = rgb2gray(croppedPlate);
-BW = imbinarize(I);
+red2 = croppedPlate(:,:,1);
+green2 = croppedPlate(:,:,2);
+blue2 = croppedPlate(:,:,3);
+
+thresh = (red2 + green2 + blue2) / 3;
+
+HSV = rgb2hsv(croppedPlate);
+value = HSV(:,:,3);
+meanValue = mean(value);
+locations = (value < meanValue & thresh < 92);
+
+%marker = imerode(locations, strel('line',10,0));
+%Iclean = imreconstruct(marker, locations);
+
+figure;
+image(locations);
+colormap(gray(2));
+title('cleaned');
 
 
-I = rgb2gray(croppedPlate);
-BW = imbinarize(I);
 
 
-Icorrected = imtophat(I, strel('disk', 50));
+% greyscale = rgb2gray(finalPlate);
+% Icorrected = imtophat(greyscale, strel('square', 30));
+% BW1 = imbinarize(Icorrected);
+% figure;
+% image(BW1);
+% colormap(gray(2));
 
-BW1 = imbinarize(Icorrected);
-complement = imcomplement(BW1);
-groupSize = round((11/18) * size(complement, 2));
-finalPlate = bwareaopen(complement, groupSize, 8);
 
-end
+
+% 
+% binary = (greyscale < 100);
+% figure;
+% image(binary);
+% colormap(gray(2));
+% title('Greyscale');
+% 
+% bw2 = bwareaopen(binary,50);
+% 
+% figure;
+% image(bw2);
+% colormap(gray(2));
+
+
+
 
 
