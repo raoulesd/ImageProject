@@ -105,12 +105,13 @@ t.ColumnWidth{1,2} = 120;
 global loopBoolean;
 loopBoolean = true;
 
-
-for i = 1:handles.nFrames
+colormap(gray(2));
+for i = 1:5:handles.nFrames
     if(loopBoolean & (i < 577 | i > 612))
         
         axes(handles.axes1);
         imageplate = getPlate(img);
+        
         
         %This needs to be changed to our own OCR
         ocrRes = ocr(imageplate);
