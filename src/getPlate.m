@@ -34,26 +34,45 @@ croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
 I = rgb2gray(croppedPlate);
 BW = imbinarize(I);
 
-
-I = rgb2gray(croppedPlate);
-BW = imbinarize(I);
-
 Icorrected = imtophat(I, strel('disk', 50));
 
 BW1 = imbinarize(Icorrected);
 complement = imcomplement(BW1);
 groupSize = round((11/18) * size(complement, 2));
 
-labeled = bwlabel(complement);
+binary = bwareaopen(complement, groupSize, 8);
 
-s = regionprops(labeled, 'extrema');
-complement = bwareaopen(complement, groupSize, 8);
+L2 = bwlabel(binary);
+s = regionprops(L2, 'BoundingBox');
 
-if(numel(s) < 6)
-    complement = bwareaopen(complement, groupSize, 8);
+X1 = -1;
+Y1 = -1;
+X2 = -1;
+Y2 = -1;
+
+for i=1:numel(s)
+    Sdata=regionprops(L2 == i,'BoundingBox');
+    if abs(Sdata.BoundingBox(3)) < (1/2) * size(binary, 2)
+       if X1 == -1
+           X1 = Sdata.BoundingBox(1);
+           Y1 = Sdata.BoundingBox(2);
+       end
+       if Sdata.BoundingBox(1) > X2
+           X2 = Sdata.BoundingBox(1) + Sdata.BoundingBox(3);
+           Y2 = Sdata.BoundingBox(2);
+       end
+    end
 end
-finalPlate = bwareaopen(complement, groupSize, 8);
-
+if (X1 | X2 | Y1 | Y2) == 1
+    finalPlate = binary;
+else
+    angleDeg = radtodeg(tan(abs(Y2 - Y1)/abs(X2 - X1)));
+    if isLarger(Y1, Y2)
+        finalPlate = imrotate(binary, -angleDeg);
+    else
+        finalPlate = imrotate(binary, angleDeg);
+    end
 end
+    
 
 
