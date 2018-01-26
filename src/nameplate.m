@@ -58,7 +58,8 @@ handles.output = hObject;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 700;
+handles.nFrames = 80;
+
 
 handles.video = VideoReader('TrainingVideo.avi');
 
@@ -105,8 +106,9 @@ t.ColumnWidth{1,2} = 120;
 global loopBoolean;
 loopBoolean = true;
 
+
 colormap(gray(2));
-for i = 1:5:handles.nFrames
+for i = 1:handles.nFrames
     if(loopBoolean & (i < 577 | i > 612))
         
         axes(handles.axes1);
@@ -118,23 +120,30 @@ for i = 1:5:handles.nFrames
        
         result = ocrRes.Text;
         
-        handles.currentText.String = result;
-        img = read(handles.video,i);
+        imageplate = getPlate(img);
         image(img);
         drawnow; 
-        table = handles.mainTable.Data;
-        table{i,1} = i;
-        if(size(result,1) == 0)
-            table{i,2} = '0';
-        else
-            table{i,2} = result(:);
-        end 
-        handles.mainTable.Data = table;
+        
         set(handles.axes1, 'Visible','off');
        
         axes(handles.axes2);
         set(handles.axes2, 'Visible','off');
         image(imageplate);
+        drawnow; 
+        
+       
+%         result = getPlate2(imageplate);
+        result = '';
+        
+        handles.currentText.String = result;
+        
+        table = handles.mainTable.Data;
+        table{i,1} = i;
+        table{i,2} = strcat(result);
+        handles.mainTable.Data = table;
+        
+        
+        
         drawnow;
         
         

@@ -4,5 +4,25 @@ imshow(imadjust(grayImage,[0.4 0.7],[]))
 
 run('C:\Program Files\DIPimage 2.9\dipstart.m')
 
+video = VideoReader('TrainingVideo.avi');
+
 test sample #37 is wrong
 
+
+
+for i=1:30
+    letter = cell2mat(alpabet(1,i));
+    [rows, columns] = find(letter);
+    row1 = min(rows);
+    row2 = max(rows);
+    col1 = min(columns);
+    col2 = max(columns);
+    croppedImage = letter(row1:row2, col1:col2);
+
+       
+    
+    c = max(normxcorr2(Img, croppedImage));
+    [ypeak, xpeak] = find(c==max(c(:)));
+    
+    total(i) = c(ypeak,xpeak);
+end
