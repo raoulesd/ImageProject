@@ -158,8 +158,7 @@ for i = 1:2:handles.video.NumberOfFrames
               table{count,3} = handles.video.CurrentTime; 
                
                 handles.mainTable.Data = table;
-            elseif(sim>30)
-                count = count - 1;
+           
             end
 
             previousLicense = result;
