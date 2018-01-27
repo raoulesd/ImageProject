@@ -154,11 +154,14 @@ for i = 1:2:handles.video.NumberOfFrames
                 table = handles.mainTable.Data;
                 table{count,1} = result;
 
-              table{count,2} = i;
-              table{count,3} = handles.video.CurrentTime; 
-               
+                table{count,2} = i;
+                table{count,3} = handles.video.CurrentTime; 
+                if(size(table,1) > 0)
+                    emptyCells = cellfun('isempty', table); 
+
+                    table(all(emptyCells,2),:) = [];
+                end
                 handles.mainTable.Data = table;
-           
             end
 
             previousLicense = result;
@@ -182,12 +185,7 @@ function stopvideo_Callback(hObject, eventdata, handles)
 % hObject    handle to stopvideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-R = handles.mainTable.Data
-emptyCells = cellfun('isempty', R); 
-
-R(all(emptyCells,2),:) = [];
-% P = {cat(1, R{:})}
-checkSolution(R, 'trainingSolutions.mat');
+checkSolution(handles.mainTable.Data, 'trainingSolutions.mat');
 global loopBoolean; 
 loopBoolean = false;
 
