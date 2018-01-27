@@ -56,7 +56,7 @@ elseif vd==27
     letter='7';
 elseif vd==28
     letter='8';
-elseif vd==30
+elseif vd==29
     letter='9';
 else
     letter='0';

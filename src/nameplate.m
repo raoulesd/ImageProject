@@ -112,65 +112,67 @@ previousLicense = [];
 
 colormap(gray(2));
 count = 1;
-disp(handles.video.NumberOfFrames)
-for i = 1:20:handles.video.NumberOfFrames
+for i = 1:2:handles.video.NumberOfFrames
     if(loopBoolean)%& (i < 577 | i > 612))
+
         img = read(handles.video,i);
         
         axes(handles.axes1);
         imageplate = getPlate(img);
-        
-        image(img);
-        drawnow; 
-        
-        set(handles.axes1, 'Visible','off');
-       
-        axes(handles.axes2);
-        set(handles.axes2, 'Visible','off');
-        image(imageplate);
-        drawnow; 
-        
-        
-        result = getPlate2(imageplate,handles.alpabet);
-        if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
-            result = previousLicense;
+
+        if(size(imageplate,1) ~= 0)
+            image(img);
+            drawnow; 
+
+%             set(handles.axes1, 'Visible','off');
+
+            axes(handles.axes2);
+%             set(handles.axes2, 'Visible','off');
+            image(imageplate);
+            drawnow; 
+
+
+            result = getPlate2(imageplate,handles.alpabet);
+            if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
+                result = previousLicense;
+            end
+    %         result = '';
+
+            handles.currentText.String = result;
+
+            previousFrame = uint8(previousFrame);
+            sim = 0;
+            if(size(previousFrame,1) == size(img,1))
+                sim = mean(mean(mean(imabsdiff(previousFrame, img))));
+            end
+            if(sim > 30)
+                count = count + 1;
+                previousLicense = {};
+            end
+
+            if( ~strcmp(handles.previous, result))
+                table = handles.mainTable.Data;
+                table{count,1} = result;
+
+              table{count,2} = i;
+              table{count,3} = handles.video.CurrentTime; 
+               
+                handles.mainTable.Data = table;
+            elseif(sim>30)
+                count = count - 1;
+            end
+
+            previousLicense = result;
+            previousFrame = img;
+            drawnow;
+
+
+            handles.previous = result;
+            pause(0.01);
         end
-%         result = '';
-        
-        handles.currentText.String = result;
-        
-        previousFrame = uint8(previousFrame);
-        sim = 0;
-        if(size(previousFrame,1) == size(img,1))
-            sim = mean(mean(mean(imabsdiff(previousFrame, img))));
-        end
-        if(sim > 30)
-            count = count + 1;
-            previousLicense = {};
-        end
-        
-        if( ~strcmp(handles.previous, result))
-            table = handles.mainTable.Data;
-            table{count,1} = result;
-            
-          table{count,2} = i;
-          table{count,3} = handles.video.CurrentTime; 
-            disp(table);
-            handles.mainTable.Data = table;
-        end
-        
-        previousLicense = result;
-        previousFrame = img;
-        drawnow;
-        
-        
-        handles.previous = result;
-%          pause(0.25);
     end
-    
+
 end
-
-
 
 guidata(hObject, handles); 
 

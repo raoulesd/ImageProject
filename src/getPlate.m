@@ -35,48 +35,51 @@ if(size(angle,1) == 0)
     angle = 0;
 end
 rotatedOriginal = imrotate(frame, 1 - angle);
-croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
-
-I = rgb2gray(croppedPlate);
-BW = imbinarize(I);
-
-Icorrected = imtophat(I, strel('disk', 50));
-
-BW1 = imbinarize(Icorrected);
-complement = imcomplement(BW1);
-groupSize = round((11/18) * size(complement, 2));
-
-binary = bwareaopen(complement, groupSize, 8);
-
-L2 = bwlabel(binary);
-s = regionprops(L2, 'BoundingBox');
-
-X1 = -1;
-Y1 = -1;
-X2 = -1;
-Y2 = -1;
-
-for i=1:numel(s)
-    Sdata=regionprops(L2 == i,'BoundingBox');
-    if abs(Sdata.BoundingBox(3)) < (1/2) * size(binary, 2)
-       if X1 == -1
-           X1 = Sdata.BoundingBox(1);
-           Y1 = Sdata.BoundingBox(2);
-       end
-       if Sdata.BoundingBox(1) > X2
-           X2 = Sdata.BoundingBox(1) + Sdata.BoundingBox(3);
-           Y2 = Sdata.BoundingBox(2);
-       end
-    end
-end
-if ((X1== -1) || (X2 == -1) || (Y1 == -1) || (Y2 == -1))
-    finalPlate = binary;
+if(size(measurements2,1) == 0)
+    finalPlate = [];
 else
-    angleDeg = radtodeg(tan(abs(Y2 - Y1)/abs(X2 - X1)));
-    if isLarger(Y1, Y2)
-        finalPlate = imrotate(binary, -angleDeg);
+    croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
+    I = rgb2gray(croppedPlate);
+    BW = imbinarize(I);
+
+    Icorrected = imtophat(I, strel('disk', 50));
+
+    BW1 = imbinarize(Icorrected);
+    complement = imcomplement(BW1);
+    groupSize = round((11/18) * size(complement, 2));
+
+    binary = bwareaopen(complement, groupSize, 8);
+
+    L2 = bwlabel(binary);
+    s = regionprops(L2, 'BoundingBox');
+
+    X1 = -1;
+    Y1 = -1;
+    X2 = -1;
+    Y2 = -1;
+
+    for i=1:numel(s)
+        Sdata=regionprops(L2 == i,'BoundingBox');
+        if abs(Sdata.BoundingBox(3)) < (1/2) * size(binary, 2)
+           if X1 == -1
+               X1 = Sdata.BoundingBox(1);
+               Y1 = Sdata.BoundingBox(2);
+           end
+           if Sdata.BoundingBox(1) > X2
+               X2 = Sdata.BoundingBox(1) + Sdata.BoundingBox(3);
+               Y2 = Sdata.BoundingBox(2);
+           end
+        end
+    end
+    if ((X1== -1) || (X2 == -1) || (Y1 == -1) || (Y2 == -1))
+        finalPlate = binary;
     else
-        finalPlate = imrotate(binary, angleDeg);
+        angleDeg = radtodeg(tan(abs(Y2 - Y1)/abs(X2 - X1)));
+        if isLarger(Y1, Y2)
+            finalPlate = imrotate(binary, -angleDeg);
+        else
+            finalPlate = imrotate(binary, angleDeg);
+        end
     end
 end
     
