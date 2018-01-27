@@ -13,12 +13,10 @@ bw2 = ~im2bw(bw2, 0.40);
 
 bw = bwareaopen(bw2, 50);
 
-figure;
-% image(bw);
 
-result = getPlate2(~bw)
-
- 
+table = {};
+dbtype 'checksolution' 
+% [poo] = checkSolution(table, 'trainingSolutions.mat');
 
  
 

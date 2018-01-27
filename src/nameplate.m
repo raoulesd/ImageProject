@@ -59,9 +59,9 @@ handles.previous = 0;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 800;
+handles.nFrames = 1200;
 
-
+handles.percentageField.String = '0%';
 
 handles.video = VideoReader('TrainingVideo.avi');
 
@@ -108,10 +108,11 @@ t.ColumnWidth{1,2} = 120;
 global loopBoolean;
 loopBoolean = true;
 previousFrame = [[]];
+previousLicense = [];
 
 colormap(gray(2));
 count = 1;
-for i = 1:8:handles.nFrames
+for i = 1:10:handles.nFrames
     if(loopBoolean & (i < 577 | i > 612))
         img = read(handles.video,i);
         
@@ -128,8 +129,11 @@ for i = 1:8:handles.nFrames
         image(imageplate);
         drawnow; 
         
-       
+        
         result = getPlate2(imageplate,handles.alpabet);
+        if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
+            result = previousLicense;
+        end
 %         result = '';
         
         handles.currentText.String = result;
@@ -141,26 +145,31 @@ for i = 1:8:handles.nFrames
         end
         if(sim > 30)
             count = count + 1;
+            previousLicense = {};
         end
-
+        
         if( ~strcmp(handles.previous, result))
             table = handles.mainTable.Data;
-            table{count,1} = strcat(result);
-            table{count,2} = i;
-            table{count,3} = handles.video.CurrentTime; 
+            table{count,1} = [strcat(result) i handles.video.CurrentTime];
+%             table{count,2} = i;
+%             table{count,3} = handles.video.CurrentTime; 
             handles.mainTable.Data = table;
         end
 
   
-        
+        previousLicense = result;
         previousFrame = img;
         drawnow;
         
         
         handles.previous = result;
-         pause(0.25);
+%          pause(0.25);
     end
+    
 end
+
+
+
 guidata(hObject, handles); 
 
 
@@ -170,6 +179,9 @@ function stopvideo_Callback(hObject, eventdata, handles)
 % hObject    handle to stopvideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+R = handles.mainTable.Data
+% P = {cat(1, R{:})}
+checkSolution(R , 'trainingSolutions.mat');
 global loopBoolean; 
 loopBoolean = false;
 

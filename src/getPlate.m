@@ -23,11 +23,17 @@ measurements = regionprops(plate, 'Orientation');
 % Use the orientation measurement to rotate the binary image to get a
 % boundingbox
 angle = cat(1, measurements.Orientation);
+if(size(angle,1) == 0)
+    angle = 0;
+end
 rotatedBinary = imrotate(plate, 1 - angle);
 measurements2 = regionprops(rotatedBinary, 'BoundingBox');
 
 % Rotate the original image the same amount and crop according to the
 % boundingbox
+if(size(angle,1) == 0)
+    angle = 0;
+end
 rotatedOriginal = imrotate(frame, 1 - angle);
 croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
 
@@ -63,7 +69,7 @@ for i=1:numel(s)
        end
     end
 end
-if (X1 | X2 | Y1 | Y2) == 1
+if ((X1== -1) || (X2 == -1) || (Y1 == -1) || (Y2 == -1))
     finalPlate = binary;
 else
     angleDeg = radtodeg(tan(abs(Y2 - Y1)/abs(X2 - X1)));
