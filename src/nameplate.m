@@ -59,7 +59,7 @@ handles.previous = 0;
 global loopBoolean;
 loopBoolean = true;
 
-handles.nFrames = 1200;
+handles.nFrames = 2500;
 
 handles.percentageField.String = '0%';
 
@@ -112,8 +112,9 @@ previousLicense = [];
 
 colormap(gray(2));
 count = 1;
-for i = 1:10:handles.nFrames
-    if(loopBoolean & (i < 577 | i > 612))
+disp(handles.video.NumberOfFrames)
+for i = 1:20:handles.video.NumberOfFrames
+    if(loopBoolean)%& (i < 577 | i > 612))
         img = read(handles.video,i);
         
         axes(handles.axes1);
@@ -150,13 +151,14 @@ for i = 1:10:handles.nFrames
         
         if( ~strcmp(handles.previous, result))
             table = handles.mainTable.Data;
-            table{count,1} = [strcat(result) i handles.video.CurrentTime];
-%             table{count,2} = i;
-%             table{count,3} = handles.video.CurrentTime; 
+            table{count,1} = result;
+            
+          table{count,2} = i;
+          table{count,3} = handles.video.CurrentTime; 
+            disp(table);
             handles.mainTable.Data = table;
         end
-
-  
+        
         previousLicense = result;
         previousFrame = img;
         drawnow;
@@ -180,8 +182,11 @@ function stopvideo_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 R = handles.mainTable.Data
+emptyCells = cellfun('isempty', R); 
+
+R(all(emptyCells,2),:) = [];
 % P = {cat(1, R{:})}
-checkSolution(R , 'trainingSolutions.mat');
+checkSolution(R, 'trainingSolutions.mat');
 global loopBoolean; 
 loopBoolean = false;
 
