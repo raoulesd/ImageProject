@@ -125,13 +125,14 @@ for i = 1:2:handles.video.NumberOfFrames
             image(img);
             drawnow; 
 
-%             set(handles.axes1, 'Visible','off');
+            set(handles.axes1, 'Visible','off');
 
             axes(handles.axes2);
-%             set(handles.axes2, 'Visible','off');
+            
             image(imageplate);
+            set(handles.axes2, 'Visible','off');
             drawnow; 
-
+            
 
             firstResult = getPlate2(imageplate,handles.alpabet);
             
@@ -177,6 +178,7 @@ for i = 1:2:handles.video.NumberOfFrames
 
 
             handles.previous = result;
+            
             pause(0.01);
             handles.percentageField.String = num2str(round(i/handles.video.NumberOfFrames,3)*100) + "%";
             
