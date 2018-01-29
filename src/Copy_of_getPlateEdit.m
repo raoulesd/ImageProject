@@ -2,7 +2,7 @@ clear all;
 run('C:\Program Files\DIPimage 2.9\dipstart.m');
 video = VideoReader('TrainingVideo.avi');
 %frame = imread('firstframe.png');
-frame = read(video, 10);
+frame = read(video, 50);
 
 % Removing objects that are not within a certain color range which represents a
 % licenseplate
@@ -82,19 +82,6 @@ if isLarger(Y1, Y2)
 else
     rotated = imrotate(finalPlate, angleDeg);
 end
-
-I2 = im2uint8(finalPlate);
-I2(~finalPlate) = 200;
-I2(finalPlate) = 240;
-s2 = regionprops(L2, 'extrema');
-figure;
-imshow(I2, 'InitialMagnification', 'fit')
-hold on
-for k = 1:numel(s2)
-   e2 = s2(k).Extrema;
-   text(e2(1,1), e2(1,2), sprintf('%d', k));
-end
-hold off
 
 figure;
 image(rotated);
