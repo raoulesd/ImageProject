@@ -28,3 +28,10 @@ for i=1:30
     
     total(i) = c(ypeak,xpeak);
 end
+
+
+TODO:
+bij bewegend beeld (meerdere kentekenplaten) --> averager implementen
+vervanging vinden voor het 'sim'berekening
+9 en 0 door elkaar halen fixen
+thresholden met license plates die hij niet herkent fixen

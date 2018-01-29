@@ -109,6 +109,7 @@ global loopBoolean;
 loopBoolean = true;
 previousFrame = [[]];
 previousLicense = [];
+resultMatrix = string([]);
 
 colormap(gray(2));
 count = 1;
@@ -132,11 +133,15 @@ for i = 1:2:handles.video.NumberOfFrames
             drawnow; 
 
 
-            result = getPlate2(imageplate,handles.alpabet);
+            firstResult = getPlate2(imageplate,handles.alpabet);
+            
+            [secondResult, resultMatrix] = analyzeResult(firstResult, resultMatrix);
+            
+            result = char(secondResult);
+            
             if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
                 result = previousLicense;
             end
-    %         result = '';
 
             handles.currentText.String = result;
 
@@ -145,9 +150,11 @@ for i = 1:2:handles.video.NumberOfFrames
             if(size(previousFrame,1) == size(img,1))
                 sim = mean(mean(mean(imabsdiff(previousFrame, img))));
             end
-            if(sim > 30)
+         
+            if(sim > 35)
                 count = count + 1;
                 previousLicense = {};
+                resultMatrix = string([]);
             end
 
             if( ~strcmp(handles.previous, result))
@@ -171,6 +178,8 @@ for i = 1:2:handles.video.NumberOfFrames
 
             handles.previous = result;
             pause(0.01);
+            handles.percentageField.String = num2str(round(i/handles.video.NumberOfFrames,3)*100) + "%";
+            
         end
     end
 
