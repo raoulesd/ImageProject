@@ -136,7 +136,6 @@ for i = 1:2:handles.video.NumberOfFrames
             if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
                 result = previousLicense;
             end
-    %         result = '';
 
             handles.currentText.String = result;
 

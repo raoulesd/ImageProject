@@ -2,7 +2,8 @@ clear all;
 run('C:\Program Files\DIPimage 2.9\dipstart.m');
 video = VideoReader('TrainingVideo.avi');
 %frame = imread('firstframe.png');
-frame = read(video, 200);
+frame = read(video, 380);
+% figure, imshow(frame);
 
 % Removing objects that are not within a certain color range which represents a
 % licenseplate
@@ -11,15 +12,17 @@ green = frame(:,:,2);
 blue = frame(:,:,3);
 
 y = (red > 60 & red < 240 & green > 80 & green < 160 & blue > 30 & blue < 100 & blue < 14/18 *green & green > 2/3 * red & green < 9/10 * red);
+%  figure, imshow(y);
 
 % Removing small holes
 closed = bclosing(y, 11, 2, 0);
 
 % Removing small groups of pixels
-opened = bopening(closed, 8, 2, 0);
+opened = bopening(closed, 4, 2, 0);
 
 % Convert the dip_image back to a MATLAB array
 plate = dip_array(opened);
+% figure, imshow(plate);
 
 % Retrieving measurements from the image with just the plate
 measurements = regionprops(plate, 'Orientation');
@@ -27,60 +30,76 @@ measurements = regionprops(plate, 'Orientation');
 % Use the orientation measurement to rotate the binary image to get a
 % boundingbox
 angle = cat(1, measurements.Orientation);
+if(size(angle,1) == 0)
+    angle = 0;
+end
 rotatedBinary = imrotate(plate, 1 - angle);
 measurements2 = regionprops(rotatedBinary, 'BoundingBox');
 
 % Rotate the original image the same amount and crop according to the
 % boundingbox
+if(size(angle,1) == 0)
+    angle = 0;
+end
 rotatedOriginal = imrotate(frame, 1 - angle);
-croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
-figure;
-image(croppedPlate);
+if(size(measurements2,1) == 0)
+    finalPlate = [];
+else
+    croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
 
-red2 = croppedPlate(:,:,1);
-green2 = croppedPlate(:,:,2);
-blue2 = croppedPlate(:,:,3);
+    I = rgb2gray(croppedPlate);
+    I_adapthisteq = adapthisteq(I);
+    sharpened = imsharpen(I_adapthisteq);
+    
+%     figure, imshow(I_histeq);
+%     title('histeq');
 
-thresh = (red2 + green2 + blue2) / 3;
+    %Icorrected = imtophat(I_adapthisteq, strel('disk', 50));
 
-HSV = rgb2hsv(croppedPlate);
-value = HSV(:,:,3);
-meanValue = mean(value);
-locations = (value < meanValue & thresh < 92);
+%     BW1 = imbinarize(I_adapthisteq);
+    BW1 = I_adapthisteq > 90;
+%     figure, imshow(BW1);
+%     title('Own threshold');
+    complement = imcomplement(BW1);
+    groupSize = round((1/2) * size(complement, 2));
 
-%marker = imerode(locations, strel('line',10,0));
-%Iclean = imreconstruct(marker, locations);
+    binary = bwareaopen(complement, groupSize, 8);
 
-figure;
-image(locations);
-colormap(gray(2));
-title('cleaned');
+    L2 = bwlabel(binary);
+    s = regionprops(L2, 'BoundingBox');
 
+    X1 = -1;
+    Y1 = -1;
+    X2 = -1;
+    Y2 = -1;
 
+    for i=1:numel(s)
+        Sdata=regionprops(L2 == i,'BoundingBox');
+        if abs(Sdata.BoundingBox(3)) < (1/2) * size(binary, 2)
+           if X1 == -1
+               X1 = Sdata.BoundingBox(1);
+               Y1 = Sdata.BoundingBox(2);
+           end
+           if Sdata.BoundingBox(1) > X2
+               X2 = Sdata.BoundingBox(1) + Sdata.BoundingBox(3);
+               Y2 = Sdata.BoundingBox(2);
+           end
+        end
+    end
+    if ((X1== -1) || (X2 == -1) || (Y1 == -1) || (Y2 == -1))
+        finalPlate = binary;
+    else
+        angleDeg = radtodeg(tan(abs(Y2 - Y1)/abs(X2 - X1)));
+        if isLarger(Y1, Y2)
+            finalPlate = imrotate(binary, -angleDeg);
+        else
+            finalPlate = imrotate(binary, angleDeg);
+        end
+    end
+end
 
-
-% greyscale = rgb2gray(finalPlate);
-% Icorrected = imtophat(greyscale, strel('square', 30));
-% BW1 = imbinarize(Icorrected);
-% figure;
-% image(BW1);
-% colormap(gray(2));
-
-
-
-% 
-% binary = (greyscale < 100);
-% figure;
-% image(binary);
-% colormap(gray(2));
-% title('Greyscale');
-% 
-% bw2 = bwareaopen(binary,50);
-% 
-% figure;
-% image(bw2);
-% colormap(gray(2));
-
+figure, imshow(finalPlate);
+title('Final');
 
 
 

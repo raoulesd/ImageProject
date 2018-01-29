@@ -16,6 +16,8 @@ yellow2 = imread('yellow2.png');
 yellow3 = imread('yellow3.png');
 yellow4 = imread('yellow4.png');
 yellow5 = imread('yellow5.png');
+yellow6 = imread('yellow5.png');
+
 
 % background = imread('background5.png');
 
@@ -48,6 +50,10 @@ yellow5_1 = squeeze(yellow5(:,:,1));
 yellow5_2 = squeeze(yellow5(:,:,2));
 yellow5_3 = squeeze(yellow5(:,:,3));
 
+yellow6_1 = squeeze(yellow6(:,:,1));
+yellow6_2 = squeeze(yellow6(:,:,2));
+yellow6_3 = squeeze(yellow6(:,:,3));
+
 license1_1 = squeeze(license1(:,:,1));
 license1_2 = squeeze(license1(:,:,2));
 license1_3 = squeeze(license1(:,:,3));
@@ -73,7 +79,7 @@ background1 = squeeze(background(:,:,1));
 background2 = squeeze(background(:,:,2));
 background3 = squeeze(background(:,:,3));
 
-% plot(yellow1_2);
+% plot(yellow6_3);
 
 
 % plot(squeeze(background(:,:,2)));
@@ -84,14 +90,14 @@ background3 = squeeze(background(:,:,3));
 hold on;
 % scatter(background1(:), background2(:), 'b');
 % scatter(lamp1(:), lamp2(:), 'm');
-scatter(yellow5_1(:), yellow5_2(:), 'b');
+scatter(yellow6_1(:), yellow6_2(:), 'b');
 % scatter(license2_1(:), license2_2(:), 'm');
 % scatter(license3_2(:), license3_3(:), 'c');
 % scatter(license4_2(:), license4_3(:), 'g');
 % 
 % %scatter(street2(:), street3(:), 'g');
 % x = 0:300;
-% line = (9/10) * x;
+% line = (2/10) * x;
 % plot(line);
 % line2 = (1/3) * x;
 % plot(line2);

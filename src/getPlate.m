@@ -39,14 +39,13 @@ if(size(measurements2,1) == 0)
     finalPlate = [];
 else
     croppedPlate = imcrop(rotatedOriginal, measurements2.BoundingBox);
+    
     I = rgb2gray(croppedPlate);
-    BW = imbinarize(I);
+    I_adapthisteq = adapthisteq(I);
 
-    Icorrected = imtophat(I, strel('disk', 50));
-
-    BW1 = imbinarize(Icorrected);
+    BW1 = I_adapthisteq > 95;
     complement = imcomplement(BW1);
-    groupSize = round((11/18) * size(complement, 2));
+    groupSize = round((1/2) * size(complement, 2));
 
     binary = bwareaopen(complement, groupSize, 8);
 
@@ -60,7 +59,7 @@ else
 
     for i=1:numel(s)
         Sdata=regionprops(L2 == i,'BoundingBox');
-        if abs(Sdata.BoundingBox(3)) < (1/2) * size(binary, 2)
+        if abs(Sdata.BoundingBox(3)) < (1/4) * size(binary, 2)
            if X1 == -1
                X1 = Sdata.BoundingBox(1);
                Y1 = Sdata.BoundingBox(2);
