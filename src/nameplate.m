@@ -57,13 +57,17 @@ handles.output = hObject;
 handles.alpabet = alphabet();
 handles.previous = 0;
 global loopBoolean;
+
+
+
 loopBoolean = true;
 
 handles.nFrames = 2500;
 
 handles.percentageField.String = '0%';
 
-handles.video = VideoReader('TrainingVideo.avi');
+handles.video = VideoReader('vid.avi');
+
 
 guidata(hObject, handles);  
 % uiwait(handles.figure1);
@@ -93,7 +97,7 @@ function startvideo_Callback(hObject, eventdata, handles)
 % hObject    handle to startvideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+tic;
 axes(handles.axes1);
 
 %I am taking the first frame just for testing purposes, as bounding boxes
@@ -108,7 +112,7 @@ t.ColumnWidth{1,2} = 120;
 global loopBoolean;
 loopBoolean = true;
 previousFrame = [[]];
-previousLicense = [];
+% previousLicense = [];
 resultMatrix = string([]);
 
 colormap(gray(2));
@@ -119,8 +123,9 @@ for i = 1:2:handles.video.NumberOfFrames
         img = read(handles.video,i);
         
         axes(handles.axes1);
-        imageplate = getPlate(img);
-
+        if(i/handles.video.NumberOfFrames < 0.8)
+            imageplate = getPlate(img);
+        end
         if(size(imageplate,1) ~= 0)
             image(img);
             drawnow; 
@@ -131,33 +136,63 @@ for i = 1:2:handles.video.NumberOfFrames
             
             image(imageplate);
             set(handles.axes2, 'Visible','off');
-            drawnow; 
+            drawnow;
             
-
-            firstResult = getPlate2(imageplate,handles.alpabet);
+            
+            
+            if(i/handles.video.NumberOfFrames < 0.8)
+                firstResult = getPlate2(imageplate,handles.alpabet);
+            end
+            
+            if(size(firstResult,2) == 8)
+                resultMatrix(size(resultMatrix,1) + 1,1) = firstResult;
+            end
+            
+            if(size(resultMatrix,1) > 1)
+                if(sum(char(resultMatrix(size(resultMatrix,1) - 1 , 1)) == char(resultMatrix(size(resultMatrix,1), 1))) < 5)
+                    count = count + 1;
+                    newResultMatrix = string([]);
+                    newResultMatrix(1,1) = resultMatrix(size(resultMatrix,1), 1);
+                    resultMatrix = newResultMatrix;
+                end
+            end
             
             [secondResult, resultMatrix] = analyzeResult(firstResult, resultMatrix);
             
+            resultMatrix
+            
             result = char(secondResult);
             
-            if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
-                result = previousLicense;
-            end
+%             sim = 0;
+%             if(size(previousFrame,1) == size(img,1))
+%                 sim = mean(max(mean(imabsdiff(previousFrame, img))));
+%             end
+        
+            
+%             if(sim > 70)
+%                 if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
+%                     if(sum(result == previousLicense) < 4)
+%                         count = count + 1;
+%                         previousLicense = [];
+%                         resultMatrix = string([]);
+%                     end
+%                 else
+%                     count = count + 1;
+%                     previousLicense = [];
+%                     resultMatrix = string([]);
+%                 end
+%             end
+     
+            
+            
+%             if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
+%                 result = previousLicense;
+%             end
 
             handles.currentText.String = result;
 
             previousFrame = uint8(previousFrame);
-            sim = 0;
-            if(size(previousFrame,1) == size(img,1))
-                sim = mean(mean(mean(imabsdiff(previousFrame, img))));
-            end
-         
-            if(sim > 35)
-                count = count + 1;
-                previousLicense = {};
-                resultMatrix = string([]);
-            end
-
+            
             if( ~strcmp(handles.previous, result))
                 table = handles.mainTable.Data;
                 table{count,1} = result;
@@ -172,20 +207,22 @@ for i = 1:2:handles.video.NumberOfFrames
                 handles.mainTable.Data = table;
             end
 
-            previousLicense = result;
+%             previousLicense = result;
             previousFrame = img;
             drawnow;
 
 
             handles.previous = result;
-            
-            pause(0.01);
+%             
+%             pause(0.1);
             handles.percentageField.String = num2str(round(i/handles.video.NumberOfFrames,3)*100) + "%";
             
         end
     end
 
 end
+
+
 
 guidata(hObject, handles); 
 
@@ -196,9 +233,9 @@ function stopvideo_Callback(hObject, eventdata, handles)
 % hObject    handle to stopvideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-checkSolution(handles.mainTable.Data, 'trainingSolutions.mat');
+checkSolution(handles.mainTable.Data, 'sols.mat');
 global loopBoolean; 
 loopBoolean = false;
-
+toc;
 guidata(hObject, handles);
 
