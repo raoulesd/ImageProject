@@ -20,6 +20,8 @@ opened = bopening(closed, 8, 2, 0);
 
 % Convert the dip_image back to a MATLAB array
 plate = dip_array(opened);
+figure, imshow(plate);
+title('diparray');
 
 % Retrieving measurements from the image with just the plate
 measurements = regionprops(plate, 'Orientation');

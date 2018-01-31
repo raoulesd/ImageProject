@@ -2,7 +2,7 @@ clear all;
 clear;
 run('C:\Program Files\DIPimage 2.9\dipstart.m')
 screen = imread('screen.png');
-license1 = imread('licenseplate.png');
+license1 = imread('plate2.png');
 license2 = imread('licenseplate2.png');
 license3 = imread('licenseplate3.png');
 license4 = imread('licenseplate4.png');
@@ -79,7 +79,7 @@ background1 = squeeze(background(:,:,1));
 background2 = squeeze(background(:,:,2));
 background3 = squeeze(background(:,:,3));
 
-% plot(yellow6_3);
+%  plot(license1_3);
 
 
 % plot(squeeze(background(:,:,2)));
@@ -90,17 +90,17 @@ background3 = squeeze(background(:,:,3));
 hold on;
 % scatter(background1(:), background2(:), 'b');
 % scatter(lamp1(:), lamp2(:), 'm');
-scatter(yellow6_1(:), yellow6_2(:), 'b');
-% scatter(license2_1(:), license2_2(:), 'm');
+% scatter(yellow6_1(:), yellow6_2(:), 'b');
+scatter(license1_1(:), license1_2(:), 'm');
 % scatter(license3_2(:), license3_3(:), 'c');
 % scatter(license4_2(:), license4_3(:), 'g');
 % 
 % %scatter(street2(:), street3(:), 'g');
-% x = 0:300;
-% line = (2/10) * x;
-% plot(line);
-% line2 = (1/3) * x;
-% plot(line2);
+x = 0:300;
+line = (2/3) * x;
+plot(line);
+line2 = (11/10) * x;
+plot(line2);
 % legend('1', '2','3', '4');
 hold off;
 % THRESHOLD: BLUE = 2/3 GREEN
