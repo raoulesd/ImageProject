@@ -22,7 +22,8 @@ permutations= {[1 1 1 0 0 1]
 % display(numel(s));
 
 count = 1;
-if(numel(s) < 15)
+% if(numel(s) < 15)
+% numel(s)
     for label = 1:numel(s)
 
 
@@ -33,10 +34,11 @@ if(numel(s) < 15)
         Img=imcrop(labeled,Sdata(1).BoundingBox);
 
     %     boolean = size(Img,2) < 20 || size(Img,2) > 70;
-        boolean = size(Img,1) / size(frame,1) < 0.35 || size(Img,1) / size(frame,1)  > 0.87 ;
+%         size(Img,1) / size(frame,1)
+        boolean = size(Img,1) / size(frame,1) < 0.35 || size(Img,1) / size(frame,1)  > 0.80 ;
         Img = im2bw(imresize(Img,[15 12.5]));
 
-
+%         figure, image(Img)
 
         totals = zeros(1,aIndex);
 
@@ -84,9 +86,9 @@ if(numel(s) < 15)
     else
         finalPlate = '';
     end
-else
-    finalPlate = '';
-end
+% else
+%     finalPlate = '';
+% end
     
 
 

@@ -1,7 +1,12 @@
 clear all;
 
+alpabet = alphabet();
 
-a = '88-88-TF'
-b = '88-BB-TF'
 
-TF = (a == b)
+video = VideoReader('vid.avi');
+
+img = read(video,701);
+
+imageplate = getPlate(img);
+
+firstResult = getPlate2(imageplate,alpabet)

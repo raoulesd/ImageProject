@@ -116,7 +116,7 @@ resultMatrix = string([]);
 
 colormap(gray(2));
 count = 1;
-for i = 1:4:handles.video.NumberOfFrames
+for i = 1:2:handles.video.NumberOfFrames
     if(loopBoolean)%& (i < 577 | i > 612))
 
         img = read(handles.video,i);
@@ -147,8 +147,16 @@ for i = 1:4:handles.video.NumberOfFrames
                 resultMatrix(size(resultMatrix,1) + 1,1) = firstResult;
             end
             
+            
+            
+            
+            
             if(size(resultMatrix,1) > 1)
-                if(sum(char(resultMatrix(size(resultMatrix,1) - 1 , 1)) == char(resultMatrix(size(resultMatrix,1), 1))) < 5)
+                string1 = char(resultMatrix(size(resultMatrix,1) - 1 , 1));
+                string2 = char(resultMatrix(size(resultMatrix,1), 1));
+                string1(regexp(string1,'[-]'))=[];
+                string2(regexp(string2,'[-]'))=[];
+                if(sum(string1 == string2) < 4)
                     count = count + 1;
                     newResultMatrix = string([]);
                     newResultMatrix(1,1) = resultMatrix(size(resultMatrix,1), 1);
@@ -158,7 +166,7 @@ for i = 1:4:handles.video.NumberOfFrames
             
             [secondResult, resultMatrix] = analyzeResult(firstResult, resultMatrix);
             
-            resultMatrix
+%             resultMatrix
             
             result = char(secondResult);
             
@@ -213,7 +221,7 @@ for i = 1:4:handles.video.NumberOfFrames
 
             handles.previous = result;
 %             
-%             pause(0.1);
+%             pause(0.2);
             handles.percentageField.String = num2str(round(i/handles.video.NumberOfFrames,3)*100) + "%";
             
         end
