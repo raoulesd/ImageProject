@@ -66,7 +66,7 @@ handles.nFrames = 2500;
 
 handles.percentageField.String = '0%';
 
-handles.video = VideoReader('vid.avi');
+handles.video = VideoReader('TrainingVideo.avi');
 
 guidata(hObject, handles);  
 % uiwait(handles.figure1);
@@ -206,7 +206,7 @@ function stopvideo_Callback(hObject, eventdata, handles)
 % hObject    handle to stopvideo (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-checkSolution(handles.mainTable.Data, 'sols.mat');
+checkSolution(handles.mainTable.Data, 'TrainingSolutions.mat');
 global loopBoolean; 
 loopBoolean = false;
 toc;
