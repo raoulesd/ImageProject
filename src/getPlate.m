@@ -76,7 +76,7 @@ else
 
     for i=1:numel(s)
         Sdata=regionprops(L2 == i,'BoundingBox');
-        if abs(Sdata.BoundingBox(3)) < (1/4) * size(binary, 2)
+        if abs(Sdata.BoundingBox(3)) < (1/6) * size(binary, 2)
            if X1 == -1
                X1 = Sdata.BoundingBox(1);
                Y1 = Sdata.BoundingBox(2);
