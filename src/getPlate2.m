@@ -31,8 +31,9 @@ for label = 1:numel(s)
     Sdata=regionprops(labeled == index,'BoundingBox');
     Img=imcrop(labeled,Sdata(1).BoundingBox);
 
-    boolean = size(Img,2) < 15 || size(Img,2) > 70;
-    Img = im2bw(imresize(Img,[30 25]));
+%     boolean = size(Img,2) < 20 || size(Img,2) > 70;
+    boolean = size(Img,1) / size(frame,1) < 0.35 || size(Img,1) / size(frame,1)  > 0.8 ;
+    Img = im2bw(imresize(Img,[15 12.5]));
 
 
 
@@ -48,9 +49,9 @@ for label = 1:numel(s)
             col2 = max(columns);
             croppedImage = letter(row1:row2, col1:col2);
 
-            croppedImage = imresize(croppedImage,[30 25]);
+            croppedImage = imresize(croppedImage,[15 12.5]);
 
-            totals(i) = mean(max(corr2(Img, croppedImage)));
+            totals(i) = corr2(Img, croppedImage);
         end
     end
     if(~boolean)
