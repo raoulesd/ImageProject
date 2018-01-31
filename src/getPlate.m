@@ -2,20 +2,37 @@ function finalPlate = getPlate(frame)
 
 % Removing objects that are not within a certain color range which represents a
 % licenseplate
-red = frame(:,:,1);
-green = frame(:,:,2);
-blue = frame(:,:,3);
+HSV = rgb2hsv(frame);
 
-y = (red > 60 & red < 240 & green > 80 & green < 160 & blue > 30 & blue < 100 & blue < 14/18 *green & green > 2/3 * red & green < 9/10 * red);
+R = frame(:,:,1);
+G = frame(:,:,2);
+B = frame(:,:,3);
+
+H = HSV(:,:,1);
+S = HSV(:,:,2);
+
+y = (R > 60 & ...
+    R < 240 & ...
+    G > 80 & ... % was 80
+    G < 160 & ...
+    B > 10 & ... 
+    B < 100 & ...
+    B < 14/18 *G & ...
+    G > 2/3 * R & ...%was 2/3
+    G < 19/20 * R);
 
 % Removing small holes
-closed = bclosing(y, 11, 2, 0);
+closed = bclosing(y, 15, 2, 0);
 
 % Removing small groups of pixels
 opened = bopening(closed, 8, 2, 0);
 
 % Convert the dip_image back to a MATLAB array
-plate = dip_array(opened);
+dip = dip_array(opened);
+
+binarized = dip == 1;
+
+plate = bwareafilt(binarized,1);
 
 % Retrieving measurements from the image with just the plate
 measurements = regionprops(plate, 'Orientation');
@@ -45,7 +62,7 @@ else
 
     BW1 = I_adapthisteq > 95;
     complement = imcomplement(BW1);
-    groupSize = round((1/2) * size(complement, 2));
+    groupSize = round((1/3) * size(complement, 2));
 
     binary = bwareaopen(complement, groupSize, 8);
 

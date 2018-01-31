@@ -63,7 +63,7 @@ handles.nFrames = 2500;
 
 handles.percentageField.String = '0%';
 
-handles.video = VideoReader('TrainingVideo.avi');
+handles.video = VideoReader('vid.avi');
 
 guidata(hObject, handles);  
 % uiwait(handles.figure1);
@@ -113,7 +113,7 @@ resultMatrix = string([]);
 
 colormap(gray(2));
 count = 1;
-for i = 1:2:handles.video.NumberOfFrames
+for i = 1:4:handles.video.NumberOfFrames
     if(loopBoolean)%& (i < 577 | i > 612))
 
         img = read(handles.video,i);
