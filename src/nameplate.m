@@ -99,9 +99,6 @@ function startvideo_Callback(hObject, eventdata, handles)
 tic;
 axes(handles.axes1);
 
-%I am taking the first frame just for testing purposes, as bounding boxes
-%need to be implemented first
-
 handles.mainTable.Data = {};
 t=handles.mainTable;
 % Set width and height
@@ -111,13 +108,13 @@ t.ColumnWidth{1,2} = 120;
 global loopBoolean;
 loopBoolean = true;
 previousFrame = [[]];
-% previousLicense = [];
+
 resultMatrix = string([]);
 
 colormap(gray(2));
 count = 1;
 for i = 1:2:handles.video.NumberOfFrames
-    if(loopBoolean)%& (i < 577 | i > 612))
+    if(loopBoolean)
 
         img = read(handles.video,i);
         
@@ -166,35 +163,7 @@ for i = 1:2:handles.video.NumberOfFrames
             
             [secondResult, resultMatrix] = analyzeResult(firstResult, resultMatrix);
             
-%             resultMatrix
-            
             result = char(secondResult);
-            
-%             sim = 0;
-%             if(size(previousFrame,1) == size(img,1))
-%                 sim = mean(max(mean(imabsdiff(previousFrame, img))));
-%             end
-        
-            
-%             if(sim > 70)
-%                 if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
-%                     if(sum(result == previousLicense) < 4)
-%                         count = count + 1;
-%                         previousLicense = [];
-%                         resultMatrix = string([]);
-%                     end
-%                 else
-%                     count = count + 1;
-%                     previousLicense = [];
-%                     resultMatrix = string([]);
-%                 end
-%             end
-     
-            
-            
-%             if(size(previousLicense,2) == 8 && size(result,2) ~= 8)
-%                 result = previousLicense;
-%             end
 
             handles.currentText.String = result;
 
@@ -214,14 +183,11 @@ for i = 1:2:handles.video.NumberOfFrames
                 handles.mainTable.Data = table;
             end
 
-%             previousLicense = result;
             previousFrame = img;
             drawnow;
 
 
             handles.previous = result;
-%             
-%             pause(0.2);
             handles.percentageField.String = num2str(round(i/handles.video.NumberOfFrames,3)*100) + "%";
             
         end
